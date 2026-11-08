@@ -80,6 +80,8 @@ body.light #toast,body.light #aboutBtn,body.light #setBtn{background:#fff;color:
 .set-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(128,128,128,.2)}
 .qib{width:min(240px,70vw);aspect-ratio:1;border-radius:50%;border:2px solid var(--cy);box-shadow:0 0 18px rgba(94,234,212,.4);margin:14px auto;position:relative}
 .qib b{position:absolute;inset:0;display:flex;justify-content:center;font-size:2.4rem;transition:transform .2s}
+.pg{height:5px;border-radius:5px;background:rgba(128,128,128,.25);margin-top:10px;overflow:hidden}.pg i{display:block;height:100%;width:0;background:var(--cy);box-shadow:0 0 8px var(--cy);transition:width .15s}
+.card[onclick]{cursor:pointer;-webkit-user-select:none;user-select:none}.card[onclick]:active{transform:scale(.99)}
 </style>
 </head>
 <body>
@@ -143,7 +145,7 @@ const r=document.createElement('div');r.className='row';r.textContent=kal;
 r.style.cssText='top:40%;font-size:clamp(34px,7vw,90px);animation-duration:22s';$('#fl').appendChild(r);
 
 // التنقل
-const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['prayer','🕋','مواقيت الصلاة'],['qibla','🧭','القبلة'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى'],['names','✨','أسماء الله']];
+const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['prayer','🕋','مواقيت الصلاة'],['qibla','🧭','القبلة'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى'],['names','💎','أسماء الله']];
 tabs.forEach(([id,ic,t])=>{const b=document.createElement('button');b.id='b_'+id;b.innerHTML=`<span class="ic">${ic}</span><span class="t">${t}</span>`;
  b.onclick=()=>id=='about'?about.classList.add('on'):show(id);$('#nav').appendChild(b)});
 function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));
@@ -154,7 +156,7 @@ const about=$('#about');
 // تنبيه الصلاة على النبي كل 30 ثانية
 function toast(t,ms=4500){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e.t);e.t=setTimeout(()=>e.classList.remove('show'),ms)}
 const lg=(k,d)=>{try{const v=localStorage.getItem('s_'+k);return v?JSON.parse(v):d}catch(e){return d}},sv=(k,v)=>{try{localStorage.setItem('s_'+k,JSON.stringify(v))}catch(e){}};
-const ST=Object.assign({sal:30,snd:1,vib:1,adhan:0,light:0,en:0},lg('st',{}));
+const ST=Object.assign({sal:30,snd:1,vib:1,adhan:0,adsnd:0,light:0,en:0},lg('st',{}));
 let AC;function beep(f=660,d=.25,n=1){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.5;o.frequency.value=f;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.05)}}catch(e){}}
 const tick=()=>beep(520,.08);
 let st;function sched(){clearInterval(st);if(ST.sal>0)st=setInterval(()=>{toast('اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ');ST.snd&&beep(700,.5)},ST.sal*1000)}
@@ -224,10 +226,13 @@ const D={
 };
 Object.entries(D).forEach(([k,v])=>{const s=$('#'+k);
  s.innerHTML=`<h2 class="c">${v.h}</h2>${v.note?`<p class="c mut">${v.note}</p>`:''}<div class="c"><button class="btn" onclick="rst('${k}')">إعادة الكل</button></div><br>`+
- v.l.map((z,i)=>`<div class="card" id="${k}${i}" data-c="${z.c}"><p class="zk">${z.t}</p><div class="zk-row"><span class="mut">التكرار: ${z.c}</span><button class="cnt" style="min-width:0" onclick="shareImg(this.closest('.card').querySelector('.zk').textContent)">📤</button><button class="cnt" onclick="dec('${k}',${i})">${z.c}</button></div></div>`).join('')});
-function dec(k,i){const e=$('#'+k+i),b=e.querySelector('.cnt');let v=+b.textContent;if(v<=0)return;v--;ST.vib&&navigator.vibrate&&navigator.vibrate(12);
- b.textContent=v||'✓';if(!v){e.classList.add('done');const nx=$('#'+k+(i+1));nx&&nx.scrollIntoView({behavior:'smooth',block:'center'})}}
-function rst(k){D[k].l.forEach((z,i)=>{const e=$('#'+k+i);e.classList.remove('done');e.querySelector('.cnt').textContent=z.c})}
+ v.l.map((z,i)=>`<div class="card" id="${k}${i}" data-c="${z.c}" onclick="dec('${k}',${i})"><p class="zk">${z.t}</p><div class="zk-row"><span class="mut">التكرار: ${z.c}</span><button class="cnt" style="min-width:0" onclick="event.stopPropagation();shareImg(this.closest('.card').querySelector('.zk').textContent)">📤</button><button class="cnt">0/${z.c}</button></div><div class="pg"><i></i></div></div>`).join('')});
+function dec(k,i){const e=$('#'+k+i),b=e.querySelector('.cnt'),c=+e.dataset.c;let v=+(e.dataset.v||0);if(v>=c)return;
+ if(k=='after'&&i>0){const q=$('#after'+(i-1));if(+(q.dataset.v||0)<+q.dataset.c){toast('أكمل الذكر السابق أولاً',1500);return}}
+ v++;e.dataset.v=v;ST.vib&&navigator.vibrate&&navigator.vibrate(12);ST.snd&&tick();
+ b.textContent=v>=c?'✓':v+'/'+c;e.querySelector('.pg i').style.width=(v/c*100)+'%';
+ if(v>=c){e.classList.add('done');ST.vib&&navigator.vibrate&&navigator.vibrate([60,40,60]);const nx=$('#'+k+(i+1));nx&&nx.scrollIntoView({behavior:'smooth',block:'center'})}}
+function rst(k){D[k].l.forEach((z,i)=>{const e=$('#'+k+i);e.classList.remove('done');e.dataset.v=0;e.querySelector('.cnt').textContent='0/'+z.c;e.querySelector('.pg i').style.width=0})}
 
 // المصحف
 let loaded=false,size=26,SU=[];
@@ -280,7 +285,7 @@ function tickPr(){if(!P||!P.t)return;
  const now=(tp.hour%24)*3600+tp.minute*60+tp.second;
  if(new Date().toLocaleDateString('en-CA',{timeZone:P.tz})!==P.key){ldPr();return}
  const sec=PN.map(([k])=>{const[h,m]=P.t[k].split(':').map(Number);return h*3600+m*60});
- {const j=sec.indexOf(now);if(ST.adhan&&j>=0&&j!=1&&P.last!==now){P.last=now;adhanAlert(PN[j][1])}}
+ {const ln=P.ln==null?now:P.ln;P.ln=now;const j=sec.findIndex((t,x)=>x!=1&&t>ln&&t<=now&&now-t<=120);if(ST.adhan&&j>=0)adhanAlert(PN[j][1],j==0)}
  let ix=sec.findIndex(t=>t>now),diff;if(ix<0){ix=0;diff=sec[0]+86400-now}else diff=sec[ix]-now;
  const z=n=>String(n).padStart(2,'0');
  $('#cd').textContent=`${z(diff/3600|0)}:${z(diff%3600/60|0)}:${z(diff%60)}`;
@@ -299,7 +304,11 @@ async function vs(){const q=$('#sq').value.replace(/[\u064B-\u065F\u0670\u0640]/
  catch(e){r.innerHTML='<p class="c mut">تعذر البحث، تأكد من الإنترنت</p>'}}
 function stH(){const S=lg('stat',{}),d=new Date();let w=0;for(let i=0;i<7;i++)w+=S[new Date(d-i*864e5).toISOString().slice(0,10)]||0;return `<div class="card c mut">اليوم: ${S[d.toISOString().slice(0,10)]||0} تسبيحة · آخر 7 أيام: ${w}</div>`}
 function stat(){const k=new Date().toISOString().slice(0,10),S=lg('stat',{});S[k]=(S[k]||0)+1;sv('stat',S)}
-function adhanAlert(nm){const m='حان الآن موعد أذان '+nm+' 🕌';toast(m,9000);beep(520,.9,3);try{window.Notification&&Notification.permission=='granted'&&new Notification('الصراط المستقيم',{body:m})}catch(e){}}
+const ADN='https://cdn.aladhan.com/audio/adhans/a9.mp3';
+let AD;function adPlay(f){adStop();const L=f?['audio/adhan-fajr.mp3',ADN]:['audio/adhan.mp3',ADN];let i=0;const go=()=>{if(i>=L.length){toast('تعذر تشغيل الأذان، تأكد من الاتصال بالإنترنت',3500);beep(520,.9,3);return}AD=new Audio(L[i++]);AD.onerror=go;AD.play().catch(()=>{})};go()}
+function adStop(){if(AD){AD.pause();AD=null}}
+$('#toast').onclick=adStop;
+function adhanAlert(nm,f){const m='حان الآن موعد أذان '+nm+' 🕌';toast(m,9000);ST.adsnd?adPlay(f):beep(520,.9,3);try{window.Notification&&Notification.permission=='granted'&&new Notification('الصراط المستقيم',{body:m})}catch(e){}}
 const HD=[['إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ','متفق عليه'],['لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ','متفق عليه'],['الْكَلِمَةُ الطَّيِّبَةُ صَدَقَةٌ','متفق عليه'],['أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ','متفق عليه'],['مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ','رواه مسلم'],['تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ','رواه الترمذي'],['الدِّينُ النَّصِيحَةُ','رواه مسلم']];
 const DU=['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي','اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا','يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ','اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ','رَبِّ زِدْنِي عِلْمًا','حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ'];
 {const d=Math.floor(Date.now()/864e5),h=HD[d%7];$('#daily').innerHTML=`<h2>حديث اليوم</h2><p class="zk">${h[0]} <span class="mut" style="font-size:.9rem">(${h[1]})</span></p><h2>دعاء اليوم</h2><p class="zk">${DU[d%7]}</p>`}
@@ -331,9 +340,10 @@ function shareImg(t){const c=document.createElement('canvas');c.width=c.height=1
  const L=[];let l='';t.trim().split(/\s+/).forEach(a=>{if(x.measureText(l+' '+a).width>880){L.push(l);l=a}else l=l?l+' '+a:a});L.push(l);
  const y0=540-L.length*lh/2+f/2;L.forEach((q,i)=>x.fillText(q,540,y0+i*lh));x.fillStyle='#5eead4';x.font='bold 36px Cairo,sans-serif';x.fillText('الصراط المستقيم',540,990);
  c.toBlob(async b=>{const fl=new File([b],'sirat.png',{type:'image/png'});try{if(navigator.canShare&&navigator.canShare({files:[fl]})){await navigator.share({files:[fl]});return}}catch(e){return}const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='sirat.png';a.click()})}
-$('#settings').innerHTML=`<div class="card"><h2 class="c">الإعدادات</h2><div class="set-row"><span>تنبيه الصلاة على النبي كل</span><select id="s_sal">${[[0,'إيقاف'],[15,'15 ثانية'],[30,'30 ثانية'],[60,'دقيقة'],[120,'دقيقتان'],[300,'5 دقائق']].map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></div>`+[['snd','صوت خفيف (نغمة التذكير والتسبيح)'],['vib','اهتزاز'],['adhan','تنبيه الأذان (والموقع مفتوح)'],['light','وضع النهار (فاتح)'],['en','English']].map(([k,t])=>`<div class="set-row"><span>${t}</span><input type="checkbox" id="s_${k}" style="width:22px;height:22px"></div>`).join('')+'</div>';
+$('#settings').innerHTML=`<div class="card"><h2 class="c">الإعدادات</h2><div class="set-row"><span>تنبيه الصلاة على النبي كل</span><select id="s_sal">${[[0,'إيقاف'],[15,'15 ثانية'],[30,'30 ثانية'],[60,'دقيقة'],[120,'دقيقتان'],[300,'5 دقائق']].map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></div>`+[['snd','صوت خفيف (نغمة التذكير والتسبيح)'],['vib','اهتزاز'],['adhan','تنبيه الأذان (يعمل والموقع/التطبيق مفتوح)'],['adsnd','أذان بصوت الشيخ مشاري العفاسي'],['light','وضع النهار (فاتح)'],['en','English']].map(([k,t])=>`<div class="set-row"><span>${t}</span><input type="checkbox" id="s_${k}" style="width:22px;height:22px"></div>`).join('')+`<div class="set-row"><span>تجربة الأذان</span><span><button class="btn" id="t1">الفجر</button> <button class="btn" id="t2">باقي الصلوات</button> <button class="btn" id="t3">⏹</button></span></div><p class="mut" style="font-size:.85rem">الأذان بصوت الشيخ مشاري العفاسي (المصدر: AlAdhan.com / Islamic Network). لأذان فجر مخصص ضع الملف audio/adhan-fajr.mp3 وسيُستخدم تلقائياً</p></div>`;
+$('#t1').onclick=()=>adPlay(1);$('#t2').onclick=()=>adPlay(0);$('#t3').onclick=adStop;
 $('#s_sal').value=ST.sal;$('#s_sal').onchange=e=>{ST.sal=+e.target.value;sv('st',ST);sched()};
-['snd','vib','adhan','light','en'].forEach(k=>{const e=$('#s_'+k);e.checked=!!ST[k];e.onchange=()=>{ST[k]=e.checked?1:0;sv('st',ST);if(k=='adhan'&&e.checked&&window.Notification)Notification.requestPermission();ap()}});
+['snd','vib','adhan','adsnd','light','en'].forEach(k=>{const e=$('#s_'+k);e.checked=!!ST[k];e.onchange=()=>{ST[k]=e.checked?1:0;sv('st',ST);if(k=='adhan'&&e.checked&&window.Notification)Notification.requestPermission();ap()}});
 bks();wird();initPr();
 show('tasbih');
 </script>
