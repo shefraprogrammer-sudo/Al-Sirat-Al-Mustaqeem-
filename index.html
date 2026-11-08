@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1d26">
+<title>الصراط المستقيم</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#0b1d26;--bg2:#10283a;--card:rgba(255,255,255,.05);--txt:#e6efe9;--mut:#9db3b0;--cy:#5eead4;--pk:#f0abfc;--gd:#fde68a;--gr:#86efac}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;font-family:'Cairo',system-ui,sans-serif;color:var(--txt);background:radial-gradient(circle at 20% 0,var(--bg2),var(--bg1) 70%) fixed;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow-x:hidden}
+.float{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+@keyframes mv{from{transform:translateX(-100%)}to{transform:translateX(100vw)}}
+.float .row{position:absolute;left:0;white-space:nowrap;font-family:Amiri,serif;font-weight:700;line-height:1.6;background:linear-gradient(90deg,#fde68a,#f0abfc,#5eead4,#fde68a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;opacity:.4;filter:drop-shadow(0 0 10px rgba(94,234,212,.7));animation:mv linear infinite;will-change:transform}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-35px) rotate(12deg)}}
+header,main,footer{position:relative;z-index:1;width:100%;max-width:900px;margin:0 auto;padding:0 14px}
+header{text-align:center;padding-top:64px}
+h1{margin:0;font-size:clamp(1.9rem,6vw,3rem);font-weight:900;color:var(--cy);text-shadow:0 0 10px var(--cy),0 0 28px rgba(94,234,212,.5)}
+.sub{color:var(--gd);font-family:Amiri,serif;font-size:1.2rem;text-shadow:0 0 10px rgba(253,230,138,.5)}
+nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}
+nav button{font:inherit;font-weight:700;color:var(--txt);background:var(--card);border:1px solid rgba(94,234,212,.3);border-radius:16px;padding:12px 6px;cursor:pointer;transition:.25s;display:flex;flex-direction:column;align-items:center;gap:4px}
+nav button .ic{font-size:1.8rem;filter:drop-shadow(0 0 6px var(--pk))}
+nav button:hover,nav button.on{border-color:var(--cy);box-shadow:0 0 14px rgba(94,234,212,.45);background:rgba(94,234,212,.12)}
+nav button.on{color:var(--cy)}
+section{display:none;animation:in .5s}section.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.card{background:var(--card);border:1px solid rgba(240,171,252,.25);border-radius:18px;padding:16px;margin-bottom:12px;backdrop-filter:blur(4px)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.chip,.btn{font:inherit;color:var(--txt);background:rgba(240,171,252,.1);border:1px solid var(--pk);border-radius:50px;padding:10px 18px;cursor:pointer;transition:.2s}
+.chip:hover,.btn:hover{box-shadow:0 0 14px var(--pk)}
+.btn.main{border-color:var(--cy);background:rgba(94,234,212,.15);font-weight:700}
+.btn.main:hover{box-shadow:0 0 14px var(--cy)}
+.c{text-align:center}h2{margin:.2em 0 .6em;color:var(--gd);font-size:1.3rem;text-shadow:0 0 8px rgba(253,230,138,.4)}
+input,select{font:inherit;color:var(--txt);background:rgba(0,0,0,.3);border:1px solid var(--cy);border-radius:12px;padding:10px;text-align:center;max-width:100%}
+select option{background:#10283a}
+.ring{position:relative;width:min(260px,70vw);aspect-ratio:1;margin:10px auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}
+.ring .bg{stroke:rgba(255,255,255,.08)}
+.ring .fg{stroke:var(--cy);stroke-linecap:round;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 6px var(--cy))}
+.tap{position:absolute;inset:14%;border-radius:50%;border:none;cursor:pointer;font:inherit;font-size:clamp(2.2rem,10vw,3.4rem);font-weight:900;color:var(--gd);background:radial-gradient(circle,rgba(94,234,212,.2),rgba(94,234,212,.04));text-shadow:0 0 14px var(--gd);touch-action:manipulation}
+.tap:active{transform:scale(.94)}
+.zk{font-family:Amiri,serif;font-size:1.35rem;line-height:2;margin:0 0 8px}
+.zk-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cnt{font-family:inherit;min-width:74px;font-weight:700;color:var(--cy);background:rgba(94,234,212,.12);border:1px solid var(--cy);border-radius:50px;padding:8px 14px;cursor:pointer}
+.done{opacity:.45;border-color:var(--gr)}.done .cnt{color:var(--gr);border-color:var(--gr)}
+#ayat{font-family:Amiri,serif;line-height:2.3;text-align:justify;font-size:1.6rem}
+#ayat b{color:var(--gd);font-size:.9em;margin:0 4px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.mut{color:var(--mut)}
+.shefra{font-weight:900;letter-spacing:2px;color:#fff;text-decoration:none;cursor:pointer;animation:neon 2s ease-in-out infinite alternate;display:inline-block}
+@keyframes neon{from{text-shadow:0 0 4px #fff,0 0 10px #f0abfc,0 0 20px #f0abfc,0 0 35px #c026d3;color:#fdf4ff}to{text-shadow:0 0 6px #fff,0 0 16px #5eead4,0 0 32px #5eead4,0 0 55px #14b8a6;color:#f0fdfa}}
+footer{margin-top:auto;text-align:center;padding:22px 14px;color:var(--mut);font-size:.95rem}
+footer .shefra{font-size:1.15rem}
+#toast{position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-140%);z-index:50;background:rgba(16,40,58,.95);border:1px solid var(--gd);color:var(--gd);padding:12px 20px;border-radius:50px;font-family:Amiri,serif;font-size:1.25rem;box-shadow:0 0 22px rgba(253,230,138,.4);transition:transform .6s;text-align:center;max-width:92vw}
+#toast.show{transform:translate(-50%,0)}
+#about{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;background:radial-gradient(circle,#10283a,#07131a);overflow:auto}
+#about.on{display:flex;animation:in .6s}
+#about h1{font-size:clamp(2.2rem,9vw,4rem)}
+#about .sal{font-family:Amiri,serif;font-size:clamp(1.6rem,6vw,2.4rem);color:var(--gd);margin:18px 0;text-shadow:0 0 14px var(--gd)}
+#about .shefra{font-size:clamp(2rem,8vw,3.2rem);margin:6px 0 26px}
+@media(max-width:480px){.zk{font-size:1.2rem}#ayat{font-size:1.35rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+#aboutBtn{position:fixed;top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));z-index:30;font:inherit;font-weight:900;font-size:1rem;color:#fff;background:rgba(16,40,58,.85);border:2px solid var(--pk);border-radius:50px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;animation:glow 2s ease-in-out infinite alternate;touch-action:manipulation}
+#aboutBtn:active{transform:scale(.95)}
+@keyframes glow{from{box-shadow:0 0 6px var(--pk),0 0 14px rgba(240,171,252,.5);border-color:var(--pk)}to{box-shadow:0 0 12px var(--cy),0 0 28px rgba(94,234,212,.7),inset 0 0 8px rgba(94,234,212,.3);border-color:var(--cy)}}
+</style>
+</head>
+<body>
+<div class="float" id="fl"></div>
+<div id="toast"></div>
+<button id="aboutBtn" onclick="document.getElementById('about').classList.add('on')">💫 حول</button>
+
+<header>
+  <h1>الصِّرَاطُ الْمُسْتَقِيمُ</h1>
+  <div class="sub">ألا بذكر الله تطمئن القلوب</div>
+  <nav id="nav"></nav>
+</header>
+
+<main>
+  <section id="tasbih"></section>
+  <section id="quran">
+    <div class="card">
+      <div class="bar">
+        <input id="sq" type="search" placeholder="🔍 ابحث عن سورة (بالاسم أو الرقم)" autocomplete="off" style="flex:1;min-width:200px" oninput="sf()">
+        <button class="btn main" onclick="sf()">بحث</button>
+      </div>
+      <div id="sres" class="chips" style="margin-bottom:12px"></div>
+      <div class="bar">
+        <select id="surah"><option>جاري التحميل…</option></select>
+        <button class="btn" onclick="fs(2)">A+</button><button class="btn" onclick="fs(-2)">A−</button>
+      </div>
+      <div id="ayat" class="mut c">اختر سورة للقراءة</div>
+    </div>
+  </section>
+  <section id="morning"></section>
+  <section id="evening"></section>
+  <section id="after"></section>
+  <section id="other"></section>
+</main>
+
+<footer>
+  كل الحقوق محفوظة © <span id="yr"></span> — تم تطوير الموقع بواسطة <a class="shefra" data-wa target="_blank" rel="noopener">SHEFRA</a>
+</footer>
+
+<div id="about">
+  <h1>الصِّرَاطُ الْمُسْتَقِيمُ</h1>
+  <div class="sal">صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ ﷺ</div>
+  <div class="mut">تم تطوير الموقع بواسطة</div>
+  <a class="shefra" data-wa target="_blank" rel="noopener">SHEFRA</a>
+  <button class="btn main" onclick="about.classList.remove('on')">رجوع للموقع</button>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const WA='https://wa.me/201091462051?text='+encodeURIComponent('السلام عليكم ورحمة الله وبركاته 🌙\nزرت موقع (الصراط المستقيم) وأعجبني جداً، وحابب أتواصل معك.');
+document.querySelectorAll('[data-wa]').forEach(a=>a.href=WA);
+$('#yr').textContent=new Date().getFullYear();
+
+// أيقونات عائمة
+const kal='لَا إِلَٰهَ إِلَّا ٱللَّهُ مُحَمَّدٌ رَسُولُ ٱللَّهِ';
+const r=document.createElement('div');r.className='row';r.textContent=kal;
+r.style.cssText='top:40%;font-size:clamp(34px,7vw,90px);animation-duration:22s';$('#fl').appendChild(r);
+
+// التنقل
+const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى']];
+tabs.forEach(([id,ic,t])=>{const b=document.createElement('button');b.id='b_'+id;b.innerHTML=`<span class="ic">${ic}</span>${t}`;
+ b.onclick=()=>id=='about'?about.classList.add('on'):show(id);$('#nav').appendChild(b)});
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id=='b_'+id));
+ if(id=='quran')loadSurahs()}
+const about=$('#about');
+
+// تنبيه الصلاة على النبي كل 30 ثانية
+function toast(t,ms=4500){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e.t);e.t=setTimeout(()=>e.classList.remove('show'),ms)}
+setInterval(()=>toast('اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ'),30000);
+
+// السبحة
+const adh=['سبحان الله','الحمد لله','الله أكبر','لا إله إلا الله','أستغفر الله','سبحان الله وبحمده','سبحان الله العظيم','اللهم صل وسلم على نبينا محمد','لا حول ولا قوة إلا بالله','حسبي الله ونعم الوكيل'];
+let remain=[...adh],cur=null,target=0,n=0;
+function tsChoose(){cur=null;const T=$('#tasbih');
+ if(!remain.length){T.innerHTML=`<div class="card c"><h2>ما شاء الله، أتممت كل الأذكار 🌟</h2><p class="mut">تقبل الله منك</p><button class="btn main" onclick="remain=[...adh];tsChoose()">ابدأ من جديد</button></div>`;return}
+ T.innerHTML=`<div class="card c"><h2>اختر الذكر</h2><div class="chips">${remain.map((a,i)=>`<button class="chip" onclick="tsPick(${i})">${a}</button>`).join('')}</div></div>`}
+function tsPick(i){cur=remain[i];$('#tasbih').innerHTML=`<div class="card c"><h2>${cur}</h2><p class="mut">كم مرة تريد أن تقولها؟</p>
+ <div class="chips" style="margin-bottom:12px">${[3,10,33,100].map(x=>`<button class="chip" onclick="tsStart(${x})">${x}</button>`).join('')}</div>
+ <input id="num" type="number" min="1" inputmode="numeric" placeholder="عدد آخر">
+ <button class="btn main" onclick="tsStart(+$('#num').value)">ابدأ</button>
+ <p><button class="btn" onclick="tsChoose()">رجوع</button></p></div>`}
+function tsStart(x){if(!x||x<1)return toast('اكتب عدداً صحيحاً',2000);target=Math.floor(x);n=0;tsDraw()}
+function tsDraw(){const C=2*Math.PI*45;$('#tasbih').innerHTML=`<div class="card c"><h2>${cur}</h2>
+ <div class="ring"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="fg" id="fg" cx="50" cy="50" r="45" stroke-dasharray="${C}" stroke-dashoffset="${C}"/></svg>
+ <button class="tap" id="tap">0</button></div>
+ <p class="mut">الهدف: ${target}</p><button class="btn" onclick="n=0;tsUpd()">تصفير</button> <button class="btn" onclick="tsChoose()">تغيير الذكر</button></div>`;
+ $('#tap').onclick=()=>{n++;navigator.vibrate&&navigator.vibrate(15);tsUpd();if(n>=target){navigator.vibrate&&navigator.vibrate([80,60,80]);toast('تقبل الله منك 🤍',2500);
+  remain=remain.filter(a=>a!=cur);setTimeout(tsChoose,700)}}}
+function tsUpd(){const C=2*Math.PI*45;$('#tap').textContent=n;$('#fg').style.strokeDashoffset=C*(1-Math.min(n/target,1))}
+tsChoose();
+
+// عرض الأذكار
+const AK=(t,c=1)=>({t,c});
+const common=[
+ AK('اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ (آية الكرسي)'),
+ AK('اقرأ سور: الإخلاص، والفلق، والناس',3)];
+const tail=[
+ AK('اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ (سيد الاستغفار)'),
+ AK('بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',3),
+ AK('رَضِيتُ بِاللَّهِ رَبًّا وَبِالْإِسْلَامِ دِينًا وَبِمُحَمَّدٍ ﷺ نَبِيًّا',3),
+ AK('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100),
+ AK('أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100),
+ AK('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',10)];
+const D={
+ morning:{h:'أذكار الصباح',l:[...common,
+  AK('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ'),
+  AK('اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ'),...tail]},
+ evening:{h:'أذكار المساء',l:[...common,
+  AK('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ'),
+  AK('اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ'),
+  AK('أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',3),...tail]},
+ after:{h:'أذكار بعد الصلاة',note:'اضغط على العدّاد مع كل تسبيحة',l:[
+  AK('اللهُ أَكْبَرُ',33),AK('سُبْحَانَ اللَّهِ',33),AK('الْحَمْدُ لِلَّهِ',33),
+  AK('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ')]},
+ other:{h:'أذكار أخرى',l:[
+  AK('بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا (عند النوم)'),
+  AK('الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ (عند الاستيقاظ)'),
+  AK('بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا (دخول المنزل)'),
+  AK('بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ (الخروج من المنزل)'),
+  AK('بِسْمِ اللَّهِ (قبل الطعام)'),
+  AK('الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ (بعد الطعام)'),
+  AK('اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ',10),
+  AK('لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',100)]}
+};
+Object.entries(D).forEach(([k,v])=>{const s=$('#'+k);
+ s.innerHTML=`<h2 class="c">${v.h}</h2>${v.note?`<p class="c mut">${v.note}</p>`:''}<div class="c"><button class="btn" onclick="rst('${k}')">إعادة الكل</button></div><br>`+
+ v.l.map((z,i)=>`<div class="card" id="${k}${i}" data-c="${z.c}"><p class="zk">${z.t}</p><div class="zk-row"><span class="mut">التكرار: ${z.c}</span><button class="cnt" onclick="dec('${k}',${i})">${z.c}</button></div></div>`).join('')});
+function dec(k,i){const e=$('#'+k+i),b=e.querySelector('.cnt');let v=+b.textContent;if(v<=0)return;v--;navigator.vibrate&&navigator.vibrate(12);
+ b.textContent=v||'✓';if(!v){e.classList.add('done');const nx=$('#'+k+(i+1));nx&&nx.scrollIntoView({behavior:'smooth',block:'center'})}}
+function rst(k){D[k].l.forEach((z,i)=>{const e=$('#'+k+i);e.classList.remove('done');e.querySelector('.cnt').textContent=z.c})}
+
+// المصحف
+let loaded=false,size=26,SU=[];
+const nz=t=>String(t).replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[إأآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').toLowerCase().trim();
+function sf(){const q=nz($('#sq').value),r=$('#sres');if(!q){r.innerHTML='';return}
+ if(!SU.length){r.innerHTML='<span class="mut">جاري تحميل السور…</span>';loadSurahs().then(()=>{r.innerHTML=SU.length?'':'<span class="mut">تعذر التحميل، تأكد من الإنترنت</span>';if(SU.length)sf()});return}
+ const m=SU.filter(x=>String(x.number)==q||nz(x.name).includes(q)||nz(x.englishName).includes(q)).slice(0,20);
+ r.innerHTML=m.length?m.map(x=>`<button class="chip" onclick="pk(${x.number})">${x.number}. ${x.name.replace('سُورَةُ ','')}</button>`).join(''):'<span class="mut">لا توجد نتائج</span>'}
+function pk(n){$('#surah').value=n;$('#sres').innerHTML='';readSurah(n)}
+async function loadSurahs(){if(loaded)return;
+ try{const r=await fetch('https://api.alquran.cloud/v1/surah');const j=await r.json();SU=j.data;
+  $('#surah').innerHTML='<option value="">— اختر السورة —</option>'+j.data.map(s=>`<option value="${s.number}">${s.number}. ${s.name}</option>`).join('');loaded=true;
+  $('#surah').onchange=e=>e.target.value&&readSurah(e.target.value)}
+ catch(e){$('#surah').innerHTML='<option>تعذر التحميل</option>';$('#ayat').textContent='تحتاج اتصالاً بالإنترنت لعرض المصحف، حاول مرة أخرى لاحقاً.'}}
+async function readSurah(n){const a=$('#ayat');a.className='';a.textContent='جاري التحميل…';
+ try{const r=await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`);const j=await r.json();
+  a.innerHTML=(n!=1&&n!=9?'<div class="c" style="color:var(--gd)">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'')+
+  j.data.ayahs.map((y,i)=>{let t=y.text;if(i==0&&n!=1)t=t.replace(/^بِسْمِ[^ ]* [^ ]* [^ ]* [^ ]* /,'');return `${t} <b>﴿${y.numberInSurah}﴾</b>`}).join(' ');
+  scrollTo({top:$('#quran').offsetTop-10,behavior:'smooth'})}
+ catch(e){a.textContent='تعذر تحميل السورة، تأكد من الاتصال بالإنترنت.'}}
+function fs(d){size=Math.min(48,Math.max(16,size+d));$('#ayat').style.fontSize=size+'px'}
+
+show('tasbih');
+</script>
+</body>
+</html>
