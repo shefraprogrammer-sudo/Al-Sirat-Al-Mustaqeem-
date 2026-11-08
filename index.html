@@ -82,6 +82,11 @@ body.light #toast,body.light #aboutBtn,body.light #setBtn{background:#fff;color:
 .qib b{position:absolute;inset:0;display:flex;justify-content:center;font-size:2.4rem;transition:transform .2s}
 .pg{height:5px;border-radius:5px;background:rgba(128,128,128,.25);margin-top:10px;overflow:hidden}.pg i{display:block;height:100%;width:0;background:var(--cy);box-shadow:0 0 8px var(--cy);transition:width .15s}
 .card[onclick]{cursor:pointer;-webkit-user-select:none;user-select:none}.card[onclick]:active{transform:scale(.99)}
+#ayat{overflow:hidden}.mpg{min-height:40vh;padding:4px}
+@keyframes foN{to{opacity:0;transform:perspective(900px) translateX(-70px) rotateY(-28deg)}}
+@keyframes foP{to{opacity:0;transform:perspective(900px) translateX(70px) rotateY(28deg)}}
+@keyframes flN{from{opacity:0;transform:perspective(900px) translateX(70px) rotateY(28deg)}to{opacity:1;transform:none}}
+@keyframes flP{from{opacity:0;transform:perspective(900px) translateX(-70px) rotateY(-28deg)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -111,6 +116,7 @@ body.light #toast,body.light #aboutBtn,body.light #setBtn{background:#fff;color:
         <button class="btn" onclick="fs(2)">A+</button><button class="btn" onclick="fs(-2)">A−</button>
       </div>
       <div class="bar"><select id="rec"><option value="ar.alafasy">مشاري العفاسي</option><option value="ar.husary">محمود الحصري</option><option value="ar.minshawi">المنشاوي</option><option value="ar.abdulbasitmurattal">عبد الباسط</option></select></div><audio id="au" controls style="width:100%;margin-bottom:12px"></audio><div id="bks" class="chips" style="margin-bottom:12px"></div><div id="ap"></div><div id="ayat" class="mut c">اختر سورة للقراءة</div>
+      <div id="pgn" class="bar" style="margin-top:14px;justify-content:space-between;align-items:center"></div>
     </div>
   </section>
   <section id="prayer"></section>
@@ -247,12 +253,26 @@ async function loadSurahs(){if(loaded)return;
   $('#surah').innerHTML='<option value="">— اختر السورة —</option>'+j.data.map(s=>`<option value="${s.number}">${s.number}. ${s.name}</option>`).join('');loaded=true;{const l=lg('last',0);if(l){$('#surah').value=l;readSurah(l,1)}}
   $('#surah').onchange=e=>e.target.value&&readSurah(e.target.value)}
  catch(e){$('#surah').innerHTML='<option>تعذر التحميل</option>';$('#ayat').textContent='تحتاج اتصالاً بالإنترنت لعرض المصحف، حاول مرة أخرى لاحقاً.'}}
-async function readSurah(n,ns){const a=$('#ayat');a.className='';a.textContent='جاري التحميل…';
+let SD=null;
+async function readSurah(n,ns){const a=$('#ayat');a.className='';a.textContent='جاري التحميل…';$('#pgn').innerHTML='';
  try{const r=await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`);const j=await r.json();
-  a.innerHTML=(n!=1&&n!=9?'<div class="c" style="color:var(--gd)">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'')+
-  j.data.ayahs.map((y,i)=>{let t=y.text;if(i==0&&n!=1)t=t.replace(/^بِسْمِ[^ ]* [^ ]* [^ ]* [^ ]* /,'');return `<span class="ay${lg('bk',[]).includes(n+':'+y.numberInSurah)?' bk':''}" data-n="${n}" data-a="${y.numberInSurah}" data-g="${y.number}">${t} <b>﴿${y.numberInSurah}﴾</b></span>`}).join(' ');
-  aus(n);sv('last',n);$('#ap').innerHTML='';$('#vres').innerHTML='';if(GA&&GA[0]==n){const e=document.querySelector(`.ay[data-a="${GA[1]}"]`);GA=null;if(e){e.classList.add('hl');e.scrollIntoView({behavior:'smooth',block:'center'});return}}if(!ns)scrollTo({top:$('#quran').offsetTop-10,behavior:'smooth'})}
+  const ay=j.data.ayahs.map((y,i)=>{let t=y.text;if(i==0&&n!=1)t=t.replace(/^بِسْمِ[^ ]* [^ ]* [^ ]* [^ ]* /,'');return{a:y.numberInSurah,g:y.number,p:y.page,t}});
+  SD={n:+n,ay,pages:[...new Set(ay.map(y=>y.p))],cur:0};
+  aus(n);sv('last',n);$('#ap').innerHTML='';$('#vres').innerHTML='';
+  let pi=0,hl=null;if(GA&&GA[0]==n){const y=ay.find(x=>x.a==GA[1]);if(y){pi=SD.pages.indexOf(y.p);hl=y.g}GA=null}
+  rp(pi,0);
+  if(hl){const e=document.querySelector(`#ayat .ay[data-g="${hl}"]`);if(e){e.classList.add('hl');e.scrollIntoView({behavior:'smooth',block:'center'});return}}
+  if(!ns)scrollTo({top:$('#quran').offsetTop-10,behavior:'smooth'})}
  catch(e){a.textContent='تعذر تحميل السورة، تأكد من الاتصال بالإنترنت.'}}
+function rp(i,dir){if(!SD||i<0||i>=SD.pages.length)return;SD.cur=i;const a=$('#ayat'),p=SD.pages[i],bk=lg('bk',[]),last=SD.pages.length-1;
+ const html=`<div class="mpg"><div class="c mut" style="font-size:.95rem;margin-bottom:8px">صفحة ${p}</div>`+(i==0&&SD.n!=1&&SD.n!=9?'<div class="c" style="color:var(--gd)">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'')+SD.ay.filter(y=>y.p==p).map(y=>`<span class="ay${bk.includes(SD.n+':'+y.a)?' bk':''}" data-n="${SD.n}" data-a="${y.a}" data-g="${y.g}">${y.t} <b>﴿${y.a}﴾</b></span>`).join(' ')+'</div>';
+ $('#pgn').innerHTML=`<button class="btn" id="pp" ${i<=0?'disabled style="opacity:.4"':''}>➡ السابقة</button><span class="mut">${i+1} / ${SD.pages.length}</span><button class="btn main" id="pn" ${i>=last&&SD.n>=114?'disabled style="opacity:.4"':''}>${i>=last?'السورة التالية':'التالية'} ⬅</button>`;
+ $('#pp').onclick=()=>rp(SD.cur-1,-1);
+ $('#pn').onclick=()=>{if(SD.cur>=SD.pages.length-1){if(SD.n<114){$('#surah').value=SD.n+1;readSurah(SD.n+1,1)}}else rp(SD.cur+1,1)};
+ const put=()=>{a.style.animation=dir?`${dir>0?'flN':'flP'} .45s ease`:'';a.className='';a.innerHTML=html;hp()};
+ clearTimeout(rp.t);
+ if(dir&&a.querySelector('.mpg')){a.style.animation=`${dir>0?'foN':'foP'} .2s ease forwards`;rp.t=setTimeout(put,200)}else put()}
+function hp(){const y=SD&&SD.ay[ai];if(!y||$('#au').paused)return;const e=document.querySelector(`#ayat .ay[data-g="${y.g}"]`);if(e){e.classList.add('pl');e.scrollIntoView({behavior:'smooth',block:'center'})}}
 function fs(d){size=Math.min(48,Math.max(16,size+d));$('#ayat').style.fontSize=size+'px'}
 
 // مواقيت الصلاة
@@ -316,19 +336,23 @@ function wird(){const t=new Date().toISOString().slice(0,10);let w=lg('wd',{p:5,
  $('#wird').innerHTML=`<h2>الورد اليومي</h2><p class="mut">صفحات يوميًا: <input id="wp" type="number" min="1" max="604" value="${w.p}" style="width:80px"> · ختمة كل ${Math.ceil(604/w.p)} يوم</p><div class="mut">اليوم: ${w.td}/${w.p} · الإجمالي: ${w.tot}/604</div><div style="height:8px;border-radius:8px;background:rgba(128,128,128,.25);margin:10px 0"><div style="height:100%;width:${Math.min(100,w.tot/6.04)}%;border-radius:8px;background:var(--cy);box-shadow:0 0 10px var(--cy)"></div></div><button class="btn" id="w1">+ صفحة</button> <button class="btn main" id="w2">أتممت ورد اليوم</button> <button class="btn" id="w3">تصفير</button>`;
  const go=f=>{f(w);if(w.tot>=604){toast('ما شاء الله، ختمتَ القرآن 🌟',6000);w.tot=0}sv('wd',w);wird()};
  $('#wp').onchange=e=>go(x=>x.p=Math.max(1,Math.min(604,+e.target.value||5)));$('#w1').onclick=()=>go(x=>{x.td++;x.tot++});$('#w2').onclick=()=>go(x=>{const r=Math.max(0,x.p-x.td);x.td+=r;x.tot+=r});$('#w3').onclick=()=>go(x=>{x.tot=0;x.td=0})}
-let AY=[],ai=0;
+let ai=0;
 const aurl=g=>`https://cdn.islamic.network/quran/audio/128/${$('#rec').value}/${g}.mp3`;
-function aload(i,play){AY=[...document.querySelectorAll('#ayat .ay')];if(!AY.length)return;ai=Math.max(0,Math.min(i,AY.length-1));$('#au').src=aurl(AY[ai].dataset.g);AY.forEach(x=>x.classList.remove('pl'));if(play)$('#au').play().catch(()=>{})}
+const hlOff=()=>document.querySelectorAll('#ayat .ay.pl').forEach(x=>x.classList.remove('pl'));
+function aload(i,play){if(!SD||!SD.ay.length)return;ai=Math.max(0,Math.min(i,SD.ay.length-1));$('#au').src=aurl(SD.ay[ai].g);hlOff();if(play)$('#au').play().catch(()=>{})}
 const aus=()=>{$('#au').pause();aload(0,false)};
-$('#au').onplay=()=>{AY.forEach(x=>x.classList.remove('pl'));const e=AY[ai];if(e){e.classList.add('pl');e.scrollIntoView({behavior:'smooth',block:'center'})}};
-$('#au').onended=()=>{if(ai<AY.length-1)aload(ai+1,true);else AY.forEach(x=>x.classList.remove('pl'))};
+$('#au').onplay=()=>{const y=SD&&SD.ay[ai];if(!y)return;const pi=SD.pages.indexOf(y.p);hlOff();if(pi!=SD.cur){rp(pi,pi>SD.cur?1:-1);return}const e=document.querySelector(`#ayat .ay[data-g="${y.g}"]`);if(e){e.classList.add('pl');e.scrollIntoView({behavior:'smooth',block:'center'})}};
+$('#au').onended=()=>{if(SD&&ai<SD.ay.length-1)aload(ai+1,true);else hlOff()};
+let tx0=null;$('#ayat').addEventListener('touchstart',e=>{tx0=e.touches[0].clientX},{passive:true});
+$('#ayat').addEventListener('touchend',e=>{if(tx0==null||!SD)return;const d=e.changedTouches[0].clientX-tx0;tx0=null;if(Math.abs(d)>60)d<0?rp(SD.cur+1,1):rp(SD.cur-1,-1)},{passive:true});
+addEventListener('keydown',e=>{if(!SD||!$('#quran').classList.contains('on')||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key=='ArrowLeft')rp(SD.cur+1,1);if(e.key=='ArrowRight')rp(SD.cur-1,-1)});
 $('#rec').onchange=()=>aload(ai,!$('#au').paused);
 function bks(){$('#bks').innerHTML=lg('bk',[]).map(k=>`<button class="chip" onclick="readSurah(${k.split(':')[0]})">★ ${k}</button>`).join('')}
 $('#ayat').onclick=e=>{const a=e.target.closest('.ay');if(!a)return;const n=a.dataset.n,y=a.dataset.a,k=n+':'+y,tx=a.textContent;
  $('#ap').innerHTML=`<div class="card c"><p class="zk">${tx}</p><div class="bar"><button class="btn" id="a1">★ علامة</button><button class="btn" id="a2">📖 تفسير</button><button class="btn" id="a3">📤 مشاركة</button><button class="btn main" id="a4">▶ استماع من هنا</button></div><p class="mut" id="tf"></p></div>`;
  $('#a1').onclick=()=>{let b=lg('bk',[]);const i=b.indexOf(k);i<0?b.push(k):b.splice(i,1);sv('bk',b);a.classList.toggle('bk');bks();toast(i<0?'تم حفظ العلامة':'تم حذف العلامة',1800)};
  $('#a2').onclick=async()=>{$('#tf').textContent='جاري التحميل…';try{const r=await fetch(`https://api.alquran.cloud/v1/ayah/${k}/ar.muyassar`);$('#tf').textContent=(await r.json()).data.text}catch(_){$('#tf').textContent='تعذر تحميل التفسير'}};
- $('#a3').onclick=()=>shareImg(tx+' — سورة رقم '+n);$('#a4').onclick=()=>aload([...document.querySelectorAll('#ayat .ay')].indexOf(a),true)};
+ $('#a3').onclick=()=>shareImg(tx+' — سورة رقم '+n);$('#a4').onclick=()=>aload(SD.ay.findIndex(y=>y.g==a.dataset.g),true)};
 function qb(){const K=[21.4225,39.8262],r=Math.PI/180,p1=P.lat*r,p2=K[0]*r,dl=(K[1]-P.lng)*r;let q=Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))/r;q=(q+360)%360;
  $('#qibla').innerHTML=`<div class="card c"><h2>اتجاه القبلة</h2><p class="mut">${Math.round(q)}° من الشمال — حسب المدينة المختارة في المواقيت (أو 📍 موقعي)</p><div class="qib"><b id="qa" style="transform:rotate(${q}deg)">🕋</b></div><button class="btn main" id="qs">تفعيل البوصلة</button><p class="mut" style="font-size:.85rem">مع تفعيل البوصلة وجّه أعلى الهاتف حتى يصبح 🕋 في الأعلى</p></div>`;
  $('#qs').onclick=async()=>{try{if(DeviceOrientationEvent.requestPermission&&await DeviceOrientationEvent.requestPermission()!='granted')return}catch(e){}
