@@ -10,7 +10,7 @@
 <title>الصراط المستقيم</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg1:#0b1d26;--bg2:#10283a;--card:rgba(255,255,255,.05);--txt:#e6efe9;--mut:#9db3b0;--cy:#5eead4;--pk:#f0abfc;--gd:#fde68a;--gr:#86efac}
+:root{--bg1:#0b1d26;--bg2:#10283a;--card:rgba(255,255,255,.05);--txt:#e6efe9;--mut:#9db3b0;--cy:#5eead4;--pk:#f0abfc;--gd:#fde68a;--gr:#86efac;--btnbg:rgba(21,46,58,.78);--btnon:rgba(23,64,63,.78)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{margin:0;min-height:100vh;display:flex;flex-direction:column;font-family:'Cairo',system-ui,sans-serif;color:var(--txt);background:radial-gradient(circle at 20% 0,var(--bg2),var(--bg1) 70%);background-color:var(--bg1);padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow-x:hidden}
@@ -23,9 +23,9 @@ header{text-align:center;padding-top:64px}
 h1{margin:0;font-size:clamp(1.9rem,6vw,3rem);font-weight:900;color:var(--cy);text-shadow:0 0 10px var(--cy),0 0 28px rgba(94,234,212,.5)}
 .sub{color:var(--gd);font-family:Amiri,serif;font-size:1.2rem;text-shadow:0 0 10px rgba(253,230,138,.5)}
 nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}
-nav button{font:inherit;font-weight:700;color:var(--txt);background:var(--card);border:1px solid rgba(94,234,212,.3);border-radius:16px;padding:12px 6px;cursor:pointer;transition:.25s;display:flex;flex-direction:column;align-items:center;gap:4px}
+nav button{font:inherit;font-weight:700;color:var(--txt);background:var(--btnbg);border:1px solid rgba(94,234,212,.3);border-radius:16px;padding:12px 6px;cursor:pointer;transition:.25s;display:flex;flex-direction:column;align-items:center;gap:4px}
 nav button .ic{font-size:1.8rem;filter:drop-shadow(0 0 6px var(--pk))}
-nav button:hover,nav button.on{border-color:var(--cy);box-shadow:0 0 14px rgba(94,234,212,.45);background:rgba(94,234,212,.12)}
+nav button:hover,nav button.on{border-color:var(--cy);box-shadow:0 0 14px rgba(94,234,212,.45);background:var(--btnon)}
 nav button.on{color:var(--cy)}
 section{display:none;animation:in .5s}section.on{display:block}
 @keyframes in{from{opacity:0;transform:translateY(10px)}}
@@ -57,8 +57,8 @@ select option{background:#10283a}
 @keyframes neon{from{text-shadow:0 0 4px #fff,0 0 10px #f0abfc,0 0 20px #f0abfc,0 0 35px #c026d3;color:#fdf4ff}to{text-shadow:0 0 6px #fff,0 0 16px #5eead4,0 0 32px #5eead4,0 0 55px #14b8a6;color:#f0fdfa}}
 footer{margin-top:auto;text-align:center;padding:22px 14px;color:var(--mut);font-size:.95rem}
 footer .shefra{font-size:1.15rem}
-#toast{position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-140%);z-index:50;background:rgba(16,40,58,.95);border:1px solid var(--gd);color:var(--gd);padding:12px 20px;border-radius:50px;font-family:Amiri,serif;font-size:1.25rem;box-shadow:0 0 22px rgba(253,230,138,.4);transition:transform .6s;text-align:center;max-width:92vw}
-#toast.show{transform:translate(-50%,0)}
+#toast{position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-140%);z-index:50;background:rgba(16,40,58,.95);border:1px solid var(--gd);color:var(--gd);padding:12px 20px;border-radius:50px;font-family:Amiri,serif;font-size:1.25rem;box-shadow:0 0 22px rgba(253,230,138,.4);transition:transform .6s,opacity .6s;opacity:0;text-align:center;max-width:92vw}
+#toast.show{transform:translate(-50%,0);opacity:1}
 #about{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;background:radial-gradient(circle,#10283a,#07131a);overflow:auto}
 #about.on{display:flex;animation:in .6s}
 #about h1{font-size:clamp(2.2rem,9vw,4rem)}
@@ -67,14 +67,14 @@ footer .shefra{font-size:1.15rem}
 @media(max-width:480px){.zk{font-size:1.2rem}#ayat{font-size:1.35rem}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 #topBtns{position:fixed;top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));z-index:30;display:flex;gap:8px}
-#aboutBtn,#setBtn{font:inherit;font-weight:900;font-size:1rem;color:#fff;background:rgba(16,40,58,.85);border:2px solid var(--pk);border-radius:50px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;animation:glow 2s ease-in-out infinite alternate;touch-action:manipulation}
+#aboutBtn,#setBtn{font:inherit;font-weight:900;font-size:1rem;color:#fff;background:rgba(16,40,58,.78);border:2px solid var(--pk);border-radius:50px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;animation:glow 2s ease-in-out infinite alternate;touch-action:manipulation}
 #aboutBtn:active,#setBtn:active{transform:scale(.95)}
 @keyframes glow{from{box-shadow:0 0 6px var(--pk),0 0 14px rgba(240,171,252,.5);border-color:var(--pk)}to{box-shadow:0 0 12px var(--cy),0 0 28px rgba(94,234,212,.7),inset 0 0 8px rgba(94,234,212,.3);border-color:var(--cy)}}
 .pr-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:14px;margin:7px 0;background:var(--card);border:1px solid transparent;font-weight:700;transition:.3s}
 .pr-row.nx{border-color:var(--cy);color:var(--cy);box-shadow:0 0 16px rgba(94,234,212,.5);background:rgba(94,234,212,.1)}
 .pr-row span:last-child{direction:rtl;font-size:1.1rem}
 .cd{font-size:clamp(1.9rem,8vw,2.8rem);font-weight:900;color:var(--gd);text-shadow:0 0 12px var(--gd);direction:ltr;letter-spacing:2px}
-body.light{--bg1:#f3efe4;--bg2:#e3efe9;--card:rgba(0,0,0,.05);--txt:#1e2b2a;--mut:#4b5f5c;--cy:#0f766e;--pk:#a21caf;--gd:#92400e;--gr:#15803d}
+body.light{--bg1:#f3efe4;--bg2:#e3efe9;--card:rgba(0,0,0,.05);--txt:#1e2b2a;--mut:#4b5f5c;--cy:#0f766e;--pk:#a21caf;--gd:#92400e;--gr:#15803d;--btnbg:rgba(235,232,220,.78);--btnon:rgba(207,232,227,.78)}
 body.light #toast,body.light #aboutBtn,body.light #setBtn{background:#fff;color:#1e2b2a}body.light #about{background:#f3efe4}
 .ay{cursor:pointer;border-radius:6px}.ay:hover{background:rgba(94,234,212,.15)}.ay.sel{background:rgba(240,171,252,.2);box-shadow:0 0 0 2px rgba(240,171,252,.5);border-radius:8px}.ay.pl{background:rgba(94,234,212,.22);box-shadow:0 0 0 2px rgba(94,234,212,.55),0 0 18px rgba(94,234,212,.35);color:var(--gd);transition:.3s}.ay.hl{background:rgba(253,230,138,.22)}.ay.bk{color:var(--gd);text-shadow:0 0 8px var(--gd)}
 .set-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(128,128,128,.2)}
@@ -92,6 +92,7 @@ body.qmode main{padding-top:58px}
 #qback{display:none;position:fixed;top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right));z-index:30;font:inherit;font-weight:900;font-size:1.05rem;color:var(--txt);background:rgba(16,40,58,.92);border:2px solid var(--cy);border-radius:50px;padding:8px 18px;cursor:pointer;align-items:center;gap:6px;touch-action:manipulation}
 body.light #qback{background:#fff}
 body.qmode #qback{display:flex}
+#quran.on{display:flex;flex-direction:column}#wird{order:2}
 </style>
 </head>
 <body>
@@ -113,7 +114,7 @@ body.qmode #qback{display:flex}
     <div class="card c" id="wird"></div>
     <div class="card">
       <div class="bar">
-        <input id="sq" type="search" placeholder="🔍 ابحث باسم السورة أو بجزء من آية (أو 2:255)" autocomplete="off" style="flex:1;min-width:200px" oninput="sf()" onkeydown="event.key=='Enter'&&(sf(),vs())">
+        <input id="sq" type="search" placeholder="🔍 سورة أو آية أو 2:255" autocomplete="off" style="flex:1;min-width:200px" oninput="sf()" onkeydown="event.key=='Enter'&&(sf(),vs())">
         <button class="btn main" onclick="sf();vs()">بحث</button>
       </div>
       <div id="sres" class="chips" style="margin-bottom:12px"></div><div id="vres"></div>
