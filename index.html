@@ -66,6 +66,10 @@ footer .shefra{font-size:1.15rem}
 #aboutBtn{position:fixed;top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));z-index:30;font:inherit;font-weight:900;font-size:1rem;color:#fff;background:rgba(16,40,58,.85);border:2px solid var(--pk);border-radius:50px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;animation:glow 2s ease-in-out infinite alternate;touch-action:manipulation}
 #aboutBtn:active{transform:scale(.95)}
 @keyframes glow{from{box-shadow:0 0 6px var(--pk),0 0 14px rgba(240,171,252,.5);border-color:var(--pk)}to{box-shadow:0 0 12px var(--cy),0 0 28px rgba(94,234,212,.7),inset 0 0 8px rgba(94,234,212,.3);border-color:var(--cy)}}
+.pr-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:14px;margin:7px 0;background:var(--card);border:1px solid transparent;font-weight:700;transition:.3s}
+.pr-row.nx{border-color:var(--cy);color:var(--cy);box-shadow:0 0 16px rgba(94,234,212,.5);background:rgba(94,234,212,.1)}
+.pr-row span:last-child{direction:rtl;font-size:1.1rem}
+.cd{font-size:clamp(1.9rem,8vw,2.8rem);font-weight:900;color:var(--gd);text-shadow:0 0 12px var(--gd);direction:ltr;letter-spacing:2px}
 </style>
 </head>
 <body>
@@ -95,6 +99,7 @@ footer .shefra{font-size:1.15rem}
       <div id="ayat" class="mut c">اختر سورة للقراءة</div>
     </div>
   </section>
+  <section id="prayer"></section>
   <section id="morning"></section>
   <section id="evening"></section>
   <section id="after"></section>
@@ -125,12 +130,12 @@ const r=document.createElement('div');r.className='row';r.textContent=kal;
 r.style.cssText='top:40%;font-size:clamp(34px,7vw,90px);animation-duration:22s';$('#fl').appendChild(r);
 
 // التنقل
-const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى']];
+const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['prayer','🕋','مواقيت الصلاة'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى']];
 tabs.forEach(([id,ic,t])=>{const b=document.createElement('button');b.id='b_'+id;b.innerHTML=`<span class="ic">${ic}</span>${t}`;
  b.onclick=()=>id=='about'?about.classList.add('on'):show(id);$('#nav').appendChild(b)});
 function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));
  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id=='b_'+id));
- if(id=='quran')loadSurahs()}
+ if(id=='quran')loadSurahs();if(id=='prayer')initPr()}
 const about=$('#about');
 
 // تنبيه الصلاة على النبي كل 30 ثانية
@@ -218,6 +223,42 @@ async function readSurah(n){const a=$('#ayat');a.className='';a.textContent='ج�
   scrollTo({top:$('#quran').offsetTop-10,behavior:'smooth'})}
  catch(e){a.textContent='تعذر تحميل السورة، تأكد من الاتصال بالإنترنت.'}}
 function fs(d){size=Math.min(48,Math.max(16,size+d));$('#ayat').style.fontSize=size+'px'}
+
+// مواقيت الصلاة
+const CT=[['القاهرة',30.0444,31.2357,5],['الإسكندرية',31.2001,29.9187,5],['الجيزة',30.0131,31.2089,5],['المنصورة',31.0364,31.3807,5],['طنطا',30.7865,31.0004,5],['أسيوط',27.1809,31.1837,5],['الأقصر',25.6872,32.6396,5],['أسوان',24.0889,32.8998,5],['بورسعيد',31.2653,32.3019,5],['السويس',29.9668,32.5498,5],['مكة المكرمة',21.3891,39.8579,4],['المدينة المنورة',24.5247,39.5692,4],['جدة',21.4858,39.1925,4],['الرياض',24.7136,46.6753,4],['الكويت',29.3759,47.9774,9],['الدوحة',25.2854,51.531,10],['دبي',25.2048,55.2708,16]];
+const PN=[['Fajr','الفجر'],['Sunrise','الشروق'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
+let P=null,prInit=false,prTimer=null;
+const f12=t=>{const[h,m]=t.slice(0,5).split(':').map(Number);return((h%12)||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'م':'ص')};
+function initPr(){if(prInit)return;prInit=true;
+ $('#prayer').innerHTML=`<div class="card c"><h2>مواقيت الصلاة</h2>
+ <div class="bar"><select id="city">${CT.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')}</select>
+ <button class="btn" onclick="gps()">📍 موقعي</button></div>
+ <div class="mut" id="pdate"></div><p class="mut" style="margin:14px 0 0" id="nxl"></p><div class="cd" id="cd">--:--:--</div></div>
+ <div id="plist"></div><p class="c mut" style="font-size:.85rem">الحساب حسب الهيئة المصرية العامة للمساحة للمدن المصرية</p>`;
+ let i=0;try{i=+localStorage.getItem('city')||0}catch(e){}
+ $('#city').value=i;$('#city').onchange=e=>{try{localStorage.setItem('city',e.target.value)}catch(_){}setCity(+e.target.value)};
+ setCity(i);prTimer=setInterval(tickPr,1000)}
+function setCity(i){const c=CT[i];P={lat:c[1],lng:c[2],m:c[3]};ldPr()}
+function gps(){if(!navigator.geolocation)return toast('جهازك لا يدعم تحديد الموقع',3000);
+ navigator.geolocation.getCurrentPosition(p=>{P={lat:p.coords.latitude,lng:p.coords.longitude,m:null};
+  if(!$('#gps')){const o=document.createElement('option');o.id='gps';o.value='gps';o.textContent='📍 موقعي الحالي';$('#city').appendChild(o)}
+  $('#city').value='gps';ldPr()},()=>toast('لم يتم السماح بتحديد الموقع، اختر مدينتك من القائمة',3500),{timeout:10000})}
+async function ldPr(){const l=$('#plist');l.innerHTML='<p class="c mut">جاري التحميل…</p>';
+ try{const r=await fetch(`https://api.aladhan.com/v1/timings?latitude=${P.lat}&longitude=${P.lng}`+(P.m?`&method=${P.m}`:''));const j=await r.json();const d=j.data;
+  P.t=d.timings;P.tz=d.meta.timezone;P.key=new Date().toLocaleDateString('en-CA',{timeZone:P.tz});
+  const h=d.date.hijri;$('#pdate').textContent=`${h.day} ${h.month.ar} ${h.year}هـ  —  ${new Date().toLocaleDateString('ar-EG',{timeZone:P.tz,weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+  l.innerHTML=PN.map(([k,n])=>`<div class="pr-row" id="p_${k}"><span>${n}</span><span>${f12(P.t[k])}</span></div>`).join('');tickPr()}
+ catch(e){l.innerHTML='<p class="c mut">تعذر تحميل المواقيت، تأكد من الإنترنت وحاول مرة أخرى.</p>'}}
+function tickPr(){if(!P||!P.t)return;
+ const tp=new Intl.DateTimeFormat('en-GB',{timeZone:P.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date()).reduce((a,x)=>(a[x.type]=+x.value,a),{});
+ const now=(tp.hour%24)*3600+tp.minute*60+tp.second;
+ if(new Date().toLocaleDateString('en-CA',{timeZone:P.tz})!==P.key){ldPr();return}
+ const sec=PN.map(([k])=>{const[h,m]=P.t[k].split(':').map(Number);return h*3600+m*60});
+ let ix=sec.findIndex(t=>t>now),diff;if(ix<0){ix=0;diff=sec[0]+86400-now}else diff=sec[ix]-now;
+ const z=n=>String(n).padStart(2,'0');
+ $('#cd').textContent=`${z(diff/3600|0)}:${z(diff%3600/60|0)}:${z(diff%60)}`;
+ $('#nxl').textContent='الوقت المتبقي على '+(PN[ix][1]==='الشروق'?'الشروق':'صلاة '+PN[ix][1]);
+ PN.forEach(([k],i)=>{const e=$('#p_'+k);e&&e.classList.toggle('nx',i===ix)})}
 
 show('tasbih');
 </script>
