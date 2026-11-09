@@ -93,6 +93,11 @@ body.qmode main{padding-top:58px}
 body.light #qback{background:#fff}
 body.qmode #qback{display:flex}
 #quran.on{display:flex;flex-direction:column}#wird{order:2}
+nav{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin:10px 0 14px}
+nav button{padding:7px 4px;font-size:.8rem;border-radius:14px;gap:1px}
+nav button .ic{font-size:1.3rem}
+@media(max-width:560px){nav{grid-template-columns:repeat(3,1fr)}h1{font-size:clamp(1.6rem,7vw,2.2rem)}header{padding-top:58px}}
+main{display:flex;flex-direction:column}#daily{order:5}section{scroll-margin-top:8px}
 </style>
 </head>
 <body>
@@ -161,9 +166,7 @@ r.style.cssText='top:40%;font-size:clamp(34px,7vw,90px);animation-duration:22s';
 const tabs=[['tasbih','📿','السبحة'],['quran','📖','المصحف'],['prayer','🕋','مواقيت الصلاة'],['qibla','🧭','القبلة'],['morning','🌅','أذكار الصباح'],['evening','🌙','أذكار المساء'],['after','🕌','بعد الصلاة'],['other','🤲','أذكار أخرى'],['names','💎','أسماء الله']];
 tabs.forEach(([id,ic,t])=>{const b=document.createElement('button');b.id='b_'+id;b.innerHTML=`<span class="ic">${ic}</span><span class="t">${t}</span>`;
  b.onclick=()=>id=='about'?about.classList.add('on'):show(id);$('#nav').appendChild(b)});
-function show(id){if(id=='quran'){qopen();return}document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id=='b_'+id));
- if(id=='quran')loadSurahs();if(id=='prayer')initPr();if(id=='qibla')qb();if(id=='names')ldN();show.f&&$('#'+id).scrollIntoView({behavior:'smooth',block:'start'});show.f=1}
+function show(id){qopen(id)}
 const about=$('#about');
 
 // تنبيه الصلاة على النبي كل 30 ثانية
@@ -321,9 +324,9 @@ function tickPr(){if(!P||!P.t)return;
 
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // ===== إضافات =====
-let qprev='tasbih';
-function qopen(){const on=document.querySelector('section.on');if(on&&on.id!='quran')qprev=on.id;document.querySelectorAll('section').forEach(x=>x.classList.toggle('on',x.id=='quran'));document.body.classList.add('qmode');scrollTo(0,0);loadSurahs();try{history.pushState({q:1},'')}catch(e){}}
-function qclose(){if(!document.body.classList.contains('qmode'))return;document.body.classList.remove('qmode');try{$('#au').pause()}catch(e){}show(qprev);scrollTo(0,0)}
+function qopen(id){document.querySelectorAll('section').forEach(x=>x.classList.toggle('on',x.id==id));if(!document.body.classList.contains('qmode')){try{history.pushState({q:1},'')}catch(e){}}document.body.classList.add('qmode');scrollTo(0,0);
+ if(id=='quran')loadSurahs();if(id=='prayer')initPr();if(id=='qibla')qb();if(id=='names')ldN()}
+function qclose(){if(!document.body.classList.contains('qmode'))return;document.body.classList.remove('qmode');document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));try{$('#au').pause()}catch(e){}scrollTo(0,0)}
 addEventListener('popstate',qclose);
 let GA=null;
 async function vs(){const q=$('#sq').value.replace(/[\u064B-\u065F\u0670\u0640]/g,'').trim(),r=$('#vres');
@@ -384,7 +387,7 @@ $('#t1').onclick=()=>adPlay(1);$('#t2').onclick=()=>adPlay(0);$('#t3').onclick=a
 $('#s_sal').value=ST.sal;$('#s_sal').onchange=e=>{ST.sal=+e.target.value;sv('st',ST);sched()};
 ['snd','vib','adhan','adsnd','light','en'].forEach(k=>{const e=$('#s_'+k);e.checked=!!ST[k];e.onchange=()=>{ST[k]=e.checked?1:0;sv('st',ST);if(k=='adhan'&&e.checked&&window.Notification)Notification.requestPermission();ap()}});
 bks();wird();initPr();
-show('tasbih');
+
 </script>
 </body>
 </html>
